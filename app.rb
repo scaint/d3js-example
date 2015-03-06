@@ -4,10 +4,31 @@ require 'slim'
 require 'coffee-script'
 require 'json'
 
-class Module
-  def modules
-    constants.select { |c| const_get(c).kind_of? Module }
+class ModulesGraph
+  attr_reader :tree
+
+  def initialize(const)
+    @tree = build(const)
   end
+
+  protected
+
+    def build(const)
+      {
+        name: const.name.split('::').last,
+        path: const.name.gsub('::', '/'),
+        children: nested_modules(const)
+      }
+    end
+
+    def nested_modules(const)
+      return [] if const.is_a? Class
+      const.constants
+        .sort
+        .map { |c| const.const_get(c) }
+        .select { |c| c.is_a? Module }
+        .map { |c| build(c) }
+    end
 end
 
 helpers do
@@ -26,11 +47,7 @@ get '/application.js' do
 end
 
 get '/data.json' do
-  data = {
-    name: 'Sinatra',
-    children: Sinatra.modules.sort.map { |c| { name: c.to_s } }
-  }
-  json data
+  json ModulesGraph.new(Sinatra).tree
 end
 
 get '/' do

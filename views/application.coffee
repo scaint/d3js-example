@@ -6,9 +6,11 @@ window.addEventListener('load', ->
 
   layout = d3.layout.cluster()
     .size([height, width-padding_right])
+
   proj = d3.svg.diagonal()
     .projection((d) -> [d.y, d.x])
-  svg = d3.select('body')
+
+  svg = d3.select('#graph')
     .append('svg')
       .attr('width', width)
       .attr('height', height)
@@ -29,8 +31,7 @@ window.addEventListener('load', ->
         .attr('class', 'node')
         .attr('transform', (d) -> "translate(#{d.y},#{d.x})")
         .on('click', (d) ->
-          path = [d.parent, d].filter((v) -> v).map((v) -> v.name).join('/')
-          window.open("http://rubydoc.info/gems/sinatra/frames/#{path}", '_blank')
+          window.open("http://rubydoc.info/gems/sinatra/frames/#{d.path}", '_blank')
         )
     node.append('circle')
       .attr('r', 4.5)
