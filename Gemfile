@@ -1,4 +1,5 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
+ruby '2.2.1'
 
 gem 'coffee-script'
 gem 'sass'
@@ -9,5 +10,5 @@ gem 'therubyracer'
 
 group :devlopment do
   gem 'pry'
-  gem 'pry-debugger'
+  gem 'byebug'
 end
